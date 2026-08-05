@@ -394,6 +394,10 @@ const formStatus = document.getElementById('formStatus');
 if (netlifyForm) {
   netlifyForm.addEventListener('submit', function (e) {
     e.preventDefault();
+    const submitBtn = netlifyForm.querySelector('button[type="submit"]');
+    if (submitBtn.disabled) return; // guard against double/rapid clicks causing duplicate submissions
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
     const formData = new FormData(netlifyForm);
     fetch('/', {
       method: 'POST',
@@ -408,6 +412,10 @@ if (netlifyForm) {
       .catch(() => {
         formStatus.textContent = 'Something went wrong. Please try again or email me directly.';
         formStatus.className = 'form-status error';
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Message';
       });
   });
 }
